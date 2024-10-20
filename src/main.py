@@ -32,7 +32,7 @@ if toml_path.exists() and toml_path.is_file():
 app_version = "unknown"
 
 if config:
-    project = config.get("project", None)
+    project = config.get("tool.poetry", None)
     app_version = "unknown" if not project else project.get("version", "unknown")
 
 

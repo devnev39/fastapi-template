@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import SysLogHandler
 from datetime import datetime
 from typing import Optional
 from fastapi import Request
@@ -22,8 +23,8 @@ app_logger.addHandler(console_handler)
 
 if settings.APP_LOGGER_ADDRESS is None:
     app_logger.warning("App logger address not set. Syslog will not be enabled.")
-else:
-    web_handler = logging.handlers.SysLogHandler(
+elif settings.APP_LOGGER_ADDRESS and settings.APP_LOGGER_PORT:
+    web_handler = SysLogHandler(
         address=(settings.APP_LOGGER_ADDRESS, settings.APP_LOGGER_PORT)
     )
     web_handler.setLevel(app_logger_level)

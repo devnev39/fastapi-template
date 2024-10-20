@@ -1,27 +1,42 @@
-[project]
-name = "fastapi-template"
-version = "0.1.0"
-description = "Add your description here"
+[tool.poetry]
+name = "test"
+version = "0.1.2"
+description = ""
+authors = ["bhuvanesh bonde <bhuvanesh.resoluteai@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-    "anyio>=4.6.2.post1",
-    "bcrypt>=4.2.0",
-    "faker>=30.6.0",
-    "fastapi[standard]>=0.115.2",
-    "markdown>=3.7",
-    "motor==3.6",
-    "passlib>=1.7.4",
-    "pydantic-settings>=2.6.0",
-    "pyjwt>=2.9.0",
-    "python-multipart>=0.0.12",
-    "toml>=0.10.2",
-]
 
-[tool.uv]
-dev-dependencies = [
-    "coverage>=7.6.3",
-    "pre-commit>=4.0.1",
-    "pytest>=8.3.3",
-    "ruff>=0.7.0",
-]
+[tool.poetry.dependencies]
+python = "~3.11"
+fastapi = {extras = ["standard"], version = "^0.112.2"}
+motor = {extras = ["srv"], version = "^3.5.1"}
+starlette = "^0.38.2"
+uvicorn = "^0.30.6"
+pydantic = "^2.8.2"
+asyncio = "^3.4.3"
+pyjwt = "^2.9.0"
+python-multipart = "^0.0.9"
+pydantic-settings = "^2.4.0"
+httpx = "0.24.1"
+trio = "0.22.0"
+anyio = "4.0.0"
+bcrypt = "^4.2.0"
+passlib = "^1.7.4"
+pymongo = "^4.8.0"
+faker = "^28.4.1"
+supervision = "^0.23.0"
+markdown = "^3.7"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+coverage = "^7.6.3"
+pytest = "8.2"
+mtools = {extras = ["all"], version = "^1.7.2"}
+pytest-anyio = "^0.0.0"
+black = "^24.8.0"
+pre-commit = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

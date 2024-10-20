@@ -4,7 +4,7 @@ This is a simple fastapi mongodb template which some common features.
 
 > ## Please configure your own onboarding scripts before using them.
 
-> To use poetry as package manager head over to devnev39/poetry branch
+> To use poetry as package manager head over to poetry branch
 
 ## Features
 
@@ -26,13 +26,23 @@ Then you can source the virtual environment by
 
 `source .venv/bin/activate`
 
+Run the backend server by
+
+`make run`
+
+or
+
+`make dev`
+
 ## Testing
 
 Testing is done using pytest
 
-    `PYTHONPATH=src python -m pytest -vv`
+`make test`
 
-Alternatively you can use `make test`
+or 
+
+`make test-vv`
 
 ## Coverage
 

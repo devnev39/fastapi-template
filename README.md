@@ -4,7 +4,7 @@ This is a simple fastapi mongodb template which some common features.
 
 > ## Please configure your own onboarding scripts before using them.
 
-> To use poetry as package manager head over to devnev39/poetry branch
+> To use uv as package manger head over to main branch.
 
 ## Features
 
@@ -16,23 +16,28 @@ This is a simple fastapi mongodb template which some common features.
 
 ## Installation
 
-This template uses [uv](https://docs.astral.sh/uv/) for package management. First install uv then follow below steps
+1. Since this template uses poetry for dependencies, make sure you have poetry installed.
 
-Install the dependencies by
+    `pip install poetry`
 
-`uv sync`
+2. Install the dependencies using
 
-Then you can source the virtual environment by
+    `poetry install`
 
-`source .venv/bin/activate`
+3. Run the application using
+
+    `make dev` or `make run`
+
 
 ## Testing
 
 Testing is done using pytest
 
-    `PYTHONPATH=src python -m pytest -vv`
+`make test`
 
-Alternatively you can use `make test`
+or
+
+`make test-vv`
 
 ## Coverage
 

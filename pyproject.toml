@@ -1,0 +1,27 @@
+[project]
+name = "fastapi-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anyio>=4.6.2.post1",
+    "bcrypt>=4.2.0",
+    "faker>=30.6.0",
+    "fastapi[standard]>=0.115.2",
+    "markdown>=3.7",
+    "motor==3.6",
+    "passlib>=1.7.4",
+    "pydantic-settings>=2.6.0",
+    "pyjwt>=2.9.0",
+    "python-multipart>=0.0.12",
+    "toml>=0.10.2",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "coverage>=7.6.3",
+    "pre-commit>=4.0.1",
+    "pytest>=8.3.3",
+    "ruff>=0.7.0",
+]

@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 
+from src.models.login import Login
 from src.models.user import User
 from src.models.role import Role
 from src.models.token import Token, TokenDecrypted
@@ -39,11 +40,7 @@ def create_token(user: User, role: Role) -> str:
     )
     return encoded
 
-
-@router.post("")
-async def login(
-    formdata: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
-) -> Token:
+async def login(formdata: Login, request: Request) -> Token:
     request.state.logger.update(Log(event=f"login - {formdata.username}"))
     # find user
     user = await get_user_by_username(formdata.username, request.app.state.db)
@@ -62,9 +59,20 @@ async def login(
 
     user = User(**user.model_dump())
 
+    return Token(access_token=token, token_type="bearer", user=user)
+
+@router.post("", response_model=Token)
+async def login_client(formdata: Login, request: Request):
+    return await login(formdata, request)
+
+@router.post("/swagger", response_model=Token)
+async def login_swagger(
+    formdata: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
+):
+    token = await login(Login(username=formdata.username, password=formdata.password), request)
     response = JSONResponse(
         status_code=200,
-        content=Token(access_token=token, token_type="bearer", user=user).model_dump(),
+        content=token
     )
-    response.set_cookie(key="Authorization", value=f"Bearer {token}")
+    response.set_cookie(key="Authorization", value=f"Bearer {token.access_token}")
     return response

@@ -11,16 +11,9 @@ from src.db.query.roles import (
     get_roles_db,
     update_role_db,
 )
-from src.core.logger.log import Log, app_logger, get_log
 
 
-def get_logger(request: Request):
-    logger = get_log(request=request)
-    logger.update(Log(filename=__name__))
-    request.state.logger = logger
-
-
-router = APIRouter(dependencies=[Depends(get_logger)])
+router = APIRouter()
 
 
 @router.get("")
@@ -30,8 +23,6 @@ async def get_all_roles(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> list[Role]:
-    request.state.logger.update(Log(event="get all roles"))
-    app_logger.debug(request.state.logger.model_dump())
     return await get_roles_db(db=request.app.state.db)
 
 
@@ -42,10 +33,7 @@ async def get_my_role(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> Role:
-    request.state.logger.update(Log(event="get my role"))
     role = await get_role_db(role_id=user.role_id, db=request.app.state.db)
-    request.state.logger.update(Log(code=200))
-    app_logger.debug(request.state.logger.model_dump())
     return role
 
 
@@ -57,10 +45,7 @@ async def get_role(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> Role:
-    request.state.logger.update(Log(event="get role"))
     role = await get_role_db(role_id=role_id, db=request.app.state.db)
-    request.state.logger.update(Log(code=200))
-    app_logger.debug(request.state.logger.model_dump())
     return role
 
 
@@ -72,11 +57,8 @@ async def create_role(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ) -> Role:
-    request.state.logger.update(Log(event="create role"))
     role.created_by = current_user.sub
     role = await create_role_db(role=role, db=request.app.state.db)
-    request.state.logger.update(Log(code=201, status="success"))
-    app_logger.debug(request.state.logger.model_dump())
     return role
 
 
@@ -89,13 +71,10 @@ async def update_role(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ) -> Role:
-    request.state.logger.update(Log(event="update role"))
     role.updated_by = current_user.sub
     role_update = await update_role_db(
         role_id=role_id, role=role, db=request.app.state.db
     )
-    request.state.logger.update(Log(status="success", code=200))
-    app_logger.debug(request.state.logger.model_dump())
     return role_update
 
 
@@ -107,8 +86,5 @@ async def delete_role(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ) -> dict:
-    request.state.logger.update(Log(event="delete role"))
     await delete_role_db(role_id=role_id, db=request.app.state.db)
-    request.state.logger.update(Log(code=200, status="success"))
-    app_logger.debug(request.state.logger.model_dump())
     return {"status": True}

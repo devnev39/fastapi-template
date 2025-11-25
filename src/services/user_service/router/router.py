@@ -14,14 +14,7 @@ from src.config.model_permissions import User as available_scopes
 from src.models.user import User, UserIn, UserUpdate
 from src.core.logger.log import Log, app_logger, get_log
 
-
-def get_logger(request: Request):
-    logger = get_log(request=request)
-    logger.update(Log(filename=__name__))
-    request.state.logger = logger
-
-
-router = APIRouter(dependencies=[Depends(get_logger)])
+router = APIRouter()
 
 
 @router.get("")
@@ -32,8 +25,6 @@ async def get_all_users(
     ),
 ) -> list[User]:
     users = await get_all_users_db(db=request.app.state.db)
-    request.state.logger.update(Log(code=200, event="get all users"))
-    app_logger.debug(request.state.logger.model_dump())
     return users
 
 
@@ -44,7 +35,6 @@ async def get_me(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> User:
-    request.state.logger.update(Log(event="get me"))
     user = await get_user_db(user_id=current_user.user_id, db=request.app.state.db)
     return user
 
@@ -57,10 +47,7 @@ async def get_user(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> User:
-    request.state.logger.update(Log(event="get user"))
     user = await get_user_db(user_id=user_id, db=request.app.state.db)
-    request.state.logger.update(Log(code=200))
-    app_logger.debug(request.state.logger.model_dump())
     return user
 
 
@@ -73,11 +60,8 @@ async def create_user(
     ),
 ) -> User:
     user.created_by = current_user.user_id
-    request.state.logger.update(Log(event="create user"))
     await get_role_db(user.role_id, request.app.state.db)
     user_new = await create_user_db(user, db=request.app.state.db)
-    request.state.logger.update(Log(code=201, status="success"))
-    app_logger.debug(request.state.logger.model_dump())
     return user_new
 
 
@@ -91,12 +75,9 @@ async def update_user(
     ),
 ) -> User:
     user.updated_by = current_user.sub
-    request.state.logger.update(Log(event="update user"))
     user_update = await update_user_db(
         user_id=user_id, user=user, db=request.app.state.db
     )
-    request.state.logger.update(Log(code=200, status="success"))
-    app_logger.debug(request.state.logger.model_dump())
     return user_update
 
 
@@ -108,7 +89,5 @@ async def delete_user(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ):
-    request.state.logger.update(Log(event="update user"))
     result = await delete_user_db(user_id=user_id, db=request.app.state.db)
-    request.state.logger.update(Log(code=200, status="success"))
     return {"status": result}

@@ -12,16 +12,9 @@ from src.models.token import Token, TokenDecrypted
 from src.db.query.users import get_user_by_username
 from src.db.query.roles import get_role_db
 from src.config.settings import settings
-from src.core.logger.log import get_log, Log, app_logger
 
 
-def get_logger(request: Request):
-    logger = get_log(request=request)
-    logger.update(log=Log(filename=__name__))
-    request.state.logger = logger
-
-
-router = APIRouter(dependencies=[Depends(get_logger)])
+router = APIRouter()
 
 
 def create_token(user: User, role: Role) -> str:
@@ -40,12 +33,10 @@ def create_token(user: User, role: Role) -> str:
     )
     return encoded
 
+
 async def login(formdata: Login, request: Request) -> Token:
-    request.state.logger.update(Log(event=f"login - {formdata.username}"))
     # find user
     user = await get_user_by_username(formdata.username, request.app.state.db)
-    request.state.logger.update(Log(msg="user found"))
-    request.state.logger.update(Log(extra=str(user.model_dump())))
     # check user password
 
     if not user.verify_password(formdata.password):
@@ -54,25 +45,24 @@ async def login(formdata: Login, request: Request) -> Token:
     role = await get_role_db(user.role_id, request.app.state.db)
     # make token
     token = create_token(user=user, role=role)
-    request.state.logger.update(Log(msg="user found, login successfull"))
-    app_logger.info(request.state.logger.model_dump())
 
     user = User(**user.model_dump())
 
     return Token(access_token=token, token_type="bearer", user=user)
 
+
 @router.post("", response_model=Token)
 async def login_client(formdata: Login, request: Request):
     return await login(formdata, request)
+
 
 @router.post("/swagger", response_model=Token)
 async def login_swagger(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
 ):
-    token = await login(Login(username=formdata.username, password=formdata.password), request)
-    response = JSONResponse(
-        status_code=200,
-        content=token
+    token = await login(
+        Login(username=formdata.username, password=formdata.password), request
     )
+    response = JSONResponse(status_code=200, content=token)
     response.set_cookie(key="Authorization", value=f"Bearer {token.access_token}")
     return response

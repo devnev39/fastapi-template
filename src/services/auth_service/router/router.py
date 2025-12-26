@@ -1,18 +1,26 @@
-import jwt
-from fastapi.responses import JSONResponse
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Request
+
+import jwt
+
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.models.login import Login
-from src.models.user import User
-from src.models.role import Role
-from src.models.token import Token, TokenDecrypted
-from src.db.query.users import get_user_by_username
-from src.db.query.roles import get_role_db
 from src.config.settings import settings
-
+from src.core.logger.context import extra_str
+from src.core.logger.log import logger
+from src.db.query.roles import get_role_db
+from src.db.query.users import get_user_by_username
+from src.models.login import Login
+from src.models.role import Role
+from src.models.token import Token
+from src.models.token import TokenDecrypted
+from src.models.user import User
 
 router = APIRouter()
 
@@ -36,14 +44,20 @@ def create_token(user: User, role: Role) -> str:
 
 async def login(formdata: Login, request: Request) -> Token:
     # find user
+    logger.info("auth.login.find_user")
     user = await get_user_by_username(formdata.username, request.app.state.db)
     # check user password
 
+    logger.info("auth.login.check_password")
     if not user.verify_password(formdata.password):
         raise HTTPException(status_code=401, detail="Username or password incorrect !")
     # get the role
+
+    logger.info("auth.login.find_role")
     role = await get_role_db(user.role_id, request.app.state.db)
+
     # make token
+    logger.info("auth.login.create_token")
     token = create_token(user=user, role=role)
 
     user = User(**user.model_dump())
@@ -53,6 +67,7 @@ async def login(formdata: Login, request: Request) -> Token:
 
 @router.post("", response_model=Token)
 async def login_client(formdata: Login, request: Request):
+    logger.info("auth.login.start")
     return await login(formdata, request)
 
 
@@ -60,6 +75,7 @@ async def login_client(formdata: Login, request: Request):
 async def login_swagger(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
 ):
+    logger.info("auth.login_swagger.start")
     token = await login(
         Login(username=formdata.username, password=formdata.password), request
     )

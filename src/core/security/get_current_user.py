@@ -1,14 +1,19 @@
-import jwt
-from fastapi import Depends, HTTPException, status, Request
-from fastapi.security import OAuth2, SecurityScopes
-from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
-from fastapi.security.utils import get_authorization_scheme_param
 from typing import Optional
+
+import jwt
+
+from fastapi import Depends
+from fastapi import HTTPException
+from fastapi import Request
+from fastapi import status
+from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
+from fastapi.security import OAuth2
+from fastapi.security import SecurityScopes
+from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import ValidationError
 
 from src.config.settings import settings
 from src.core.exceptions.token_exception import TokenException
-from src.core.logger.log import Log, app_logger
 from src.models.token import TokenDecrypted
 
 

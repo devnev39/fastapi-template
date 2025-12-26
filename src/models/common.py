@@ -1,6 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel, model_validator
+
 from bson import ObjectId
+from pydantic import BaseModel
+from pydantic import model_validator
 
 from src.core.utils.time import get_datetime_str
 
@@ -29,3 +31,7 @@ class CommonMethods(BaseModel):
         if "_id" in values and isinstance(values["_id"], ObjectId):
             values["id"] = str(values.pop("_id"))
         return values
+
+
+class StatusResponse(BaseModel):
+    status: str = "Running"

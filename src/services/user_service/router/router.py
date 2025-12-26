@@ -1,18 +1,21 @@
-from fastapi import APIRouter, Depends, Path, Request, Security
+from fastapi import APIRouter
+from fastapi import Path
+from fastapi import Request
+from fastapi import Security
 
-from src.core.security.get_current_user import get_current_user
-from src.db.query.users import (
-    create_user_db,
-    delete_user_db,
-    get_all_users_db,
-    get_user_db,
-    update_user_db,
-)
-from src.db.query.roles import get_role_db
-from src.models.token import TokenDecrypted
 from src.config.model_permissions import User as available_scopes
-from src.models.user import User, UserIn, UserUpdate
-from src.core.logger.log import Log, app_logger, get_log
+from src.core.logger.log import logger
+from src.core.security.get_current_user import get_current_user
+from src.db.query.roles import get_role_db
+from src.db.query.users import create_user_db
+from src.db.query.users import delete_user_db
+from src.db.query.users import get_all_users_db
+from src.db.query.users import get_user_db
+from src.db.query.users import update_user_db
+from src.models.token import TokenDecrypted
+from src.models.user import User
+from src.models.user import UserIn
+from src.models.user import UserUpdate
 
 router = APIRouter()
 
@@ -24,6 +27,7 @@ async def get_all_users(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> list[User]:
+    logger.info("router.user.get_all_user")
     users = await get_all_users_db(db=request.app.state.db)
     return users
 
@@ -35,6 +39,7 @@ async def get_me(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> User:
+    logger.info("router.user.get_me")
     user = await get_user_db(user_id=current_user.user_id, db=request.app.state.db)
     return user
 
@@ -47,6 +52,7 @@ async def get_user(
         get_current_user, scopes=[available_scopes.permissions.read]
     ),
 ) -> User:
+    logger.info("router.user.get_user_by_id")
     user = await get_user_db(user_id=user_id, db=request.app.state.db)
     return user
 
@@ -59,6 +65,7 @@ async def create_user(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ) -> User:
+    logger.info("router.user.create_user")
     user.created_by = current_user.user_id
     await get_role_db(user.role_id, request.app.state.db)
     user_new = await create_user_db(user, db=request.app.state.db)
@@ -74,6 +81,7 @@ async def update_user(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ) -> User:
+    logger.info("router.user.update_user")
     user.updated_by = current_user.sub
     user_update = await update_user_db(
         user_id=user_id, user=user, db=request.app.state.db
@@ -89,5 +97,7 @@ async def delete_user(
         get_current_user, scopes=[available_scopes.permissions.write]
     ),
 ):
+
+    logger.info("router.user.delete_user")
     result = await delete_user_db(user_id=user_id, db=request.app.state.db)
     return {"status": result}

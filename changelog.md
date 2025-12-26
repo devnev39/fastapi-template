@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Middleware to log each request response
 - Config to set the logging and other things
 
+#### Encryption support
+- Add support for assymetric encryption while transporting sensitive data
+
 ## [0.1.3]
 
 

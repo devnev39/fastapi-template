@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="5OOsz73Edr7Fnapb6o5C" name="Page-1">
-        <mxGraphModel dx="671" dy="343" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="896" dy="444" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -94,7 +94,7 @@
                 <mxCell id="34" value="Internal server error" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="640" y="790" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="{&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;detail: String,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;trace_id: number&lt;br&gt;}" style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                <mxCell id="36" value="{&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;detail: String,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;trace_id: number&lt;br&gt;}" style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
                     <mxGeometry x="850" y="560" width="150" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="40" value="Request response life cycle&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22Fastapi%20Server%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22410%22%20y%3D%22940%22%20width%3D%22120%22%20height%3D%2260%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" parent="1" vertex="1">
@@ -232,20 +232,47 @@
                 <mxCell id="84" value="Services" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="2008" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="85" value="" style="swimlane;startSize=0;" vertex="1" parent="1">
+                <mxCell id="85" value="" style="swimlane;startSize=0;" parent="1" vertex="1">
                     <mxGeometry x="870" y="1200" width="790" height="320" as="geometry"/>
                 </mxCell>
-                <mxCell id="92" value="Role Based Access Control" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="85">
+                <mxCell id="92" value="Role Based Access Control" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="85" vertex="1">
                     <mxGeometry y="10" width="170" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="101" value="Permissions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="85">
+                <mxCell id="101" value="Permissions" style="rounded=1;whiteSpace=wrap;html=1;" parent="85" vertex="1">
                     <mxGeometry x="90" y="150" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="102" value="Resource" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="85">
+                <mxCell id="102" value="Resource" style="rounded=1;whiteSpace=wrap;html=1;" parent="85" vertex="1">
                     <mxGeometry x="90" y="230" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="100" value="Role" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="85">
+                <mxCell id="100" value="Role" style="rounded=1;whiteSpace=wrap;html=1;" parent="85" vertex="1">
                     <mxGeometry x="90" y="60" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="910" y="1640" width="750" height="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="104" value="" style="swimlane;startSize=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" parent="107" vertex="1">
+                    <mxGeometry x="-70.00480916030534" y="40" width="744.2748091603053" height="459.99999999999994" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="Logging" style="text;html=1;align=center;verticalAlign=middle;resizable=1;points=[];autosize=1;strokeColor=none;fillColor=none;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" parent="104" vertex="1">
+                    <mxGeometry x="-5.725190839694619" width="80.15267175572518" height="34.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="108" value="structured logs" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="100" y="80" width="104.27" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="debug logs" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="220.0000000000001" y="80" width="104.27" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="Log types" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="100" y="24" width="230" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="111" value="Log output" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="390" y="24" width="230" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="112" value="File save" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="390" y="80" width="104.27" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="113" value="Terminal" style="rounded=1;whiteSpace=wrap;html=1;" parent="104" vertex="1">
+                    <mxGeometry x="515.73" y="80" width="104.27" height="50" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

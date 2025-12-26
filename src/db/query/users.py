@@ -1,9 +1,13 @@
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from src.core.exceptions.resource import ResourceInsertionFailed, ResourceNotFound
-from src.models.user import User, UserIn, UserUpdate, UserOut
+from src.core.exceptions.resource import ResourceInsertionFailed
+from src.core.exceptions.resource import ResourceNotFound
 from src.db.collections import collections
+from src.models.user import User
+from src.models.user import UserIn
+from src.models.user import UserOut
+from src.models.user import UserUpdate
 
 
 async def get_all_users_db(db: AsyncIOMotorDatabase) -> list[User]:
@@ -18,7 +22,9 @@ async def get_user_by_username(username: str, db: AsyncIOMotorDatabase) -> UserO
     users_collection = db.get_collection(collections.users_collection)
     user = await users_collection.find_one({"username": username})
     if not user:
-        raise ResourceNotFound(resource_name="User", resource_id=username)
+        raise ResourceNotFound(
+            resource_name="User", resource_id=username, event="db.user.find_user"
+        )
     return UserOut(**user)
 
 
@@ -26,7 +32,9 @@ async def get_user_db(user_id: str, db: AsyncIOMotorDatabase) -> User:
     users_collection = db.get_collection(collections.users_collection)
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     if not user:
-        raise ResourceNotFound(resource_name="User", resource_id=user_id)
+        raise ResourceNotFound(
+            resource_name="User", resource_id=user_id, event="db.user.find_user"
+        )
     return user
 
 
@@ -34,7 +42,9 @@ async def create_user_db(user: UserIn, db: AsyncIOMotorDatabase) -> User:
     users_collection = db.get_collection(collections.users_collection)
     result = await users_collection.insert_one(user.model_dump_mongo())
     if not result.inserted_id:
-        raise ResourceInsertionFailed(resource_name="User", resource_id=user.name)
+        raise ResourceInsertionFailed(
+            resource_name="User", resource_id=user.name, event="db.user.insert_user"
+        )
     return await get_user_db(result.inserted_id, db)
 
 

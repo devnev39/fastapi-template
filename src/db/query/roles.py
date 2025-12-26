@@ -1,9 +1,11 @@
 from bson import ObjectId
-
-from src.core.exceptions.resource import ResourceInsertionFailed, ResourceNotFound
-from src.models.role import Role, RoleUpdate
-from src.db.collections import collections
 from motor.motor_asyncio import AsyncIOMotorDatabase
+
+from src.core.exceptions.resource import ResourceInsertionFailed
+from src.core.exceptions.resource import ResourceNotFound
+from src.db.collections import collections
+from src.models.role import Role
+from src.models.role import RoleUpdate
 
 
 async def get_roles_db(db: AsyncIOMotorDatabase) -> list[Role]:
@@ -18,7 +20,9 @@ async def get_role_db(role_id: str, db: AsyncIOMotorDatabase) -> Role:
     roles_collection = db.get_collection(collections.roles_collection)
     role = await roles_collection.find_one({"_id": ObjectId(role_id)})
     if not role:
-        raise ResourceNotFound(resource_name="Role", resource_id=role_id)
+        raise ResourceNotFound(
+            resource_name="Role", resource_id=role_id, event="db.role.get_role_by_id"
+        )
     return Role(**role)
 
 
@@ -26,7 +30,9 @@ async def create_role_db(role: Role, db: AsyncIOMotorDatabase) -> Role:
     roles_collection = db.get_collection(collections.roles_collection)
     result = await roles_collection.insert_one(role.model_dump_mongo())
     if not result.inserted_id:
-        raise ResourceInsertionFailed(resource_name="Role", resource_id=role.name)
+        raise ResourceInsertionFailed(
+            resource_name="Role", resource_id=role.name, event="db.role.insert_role"
+        )
     return await get_role_db(role_id=result.inserted_id, db=db)
 
 

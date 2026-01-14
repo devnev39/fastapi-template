@@ -11,6 +11,7 @@ from structlog import contextvars
 from src.core.logger.context import error
 from src.core.logger.context import extra_str
 from src.core.logger.context import request_id
+from src.core.logger.context import span_list
 from src.core.logger.log import logger
 
 
@@ -44,6 +45,7 @@ class LoggingASGIMiddleware:
                         event="http.response.end",
                         latency=round(req_time * 1000, 2),
                         status_code=message.get("status"),
+                        spans=span_list.get(),
                     )
 
             await self.app(scope, receive, send_wrapper)

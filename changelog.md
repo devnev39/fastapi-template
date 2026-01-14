@@ -7,9 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Cooking
 
-#### Logging Support Updates
-- Switch to structlog
-- Middleware to log each request response
+#### Config
 - Config to set the logging and other things
 
 #### Encryption support
@@ -17,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.3]
 
+### Added
+- Added structured logs
 
 ## [0.1.2] - 14 Oct 2024
 

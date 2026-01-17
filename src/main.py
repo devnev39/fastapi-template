@@ -11,6 +11,8 @@ from fastapi import Depends
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Request
+from fastapi import status
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.responses import JSONResponse
 from jwt import ExpiredSignatureError
@@ -136,6 +138,21 @@ async def client_server_exception_handler(request: Request, exc: Exception):
 
     response.headers.append("Access-Control-Allow-Origin", cors_origin)
     return response
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(_: Request, exc: RequestValidationError):
+    errors = [
+        {"field": err.get("loc"), "message": err.get("msg")} for err in exc.errors()
+    ]
+    logger.warning(event="app.main.request_validation_error", error=errors)
+    return JSONResponse(
+        content={
+            "detail": exc.errors(),
+            "trace_id": request_id.get(),
+        },
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+    )
 
 
 app.include_router(router=router)

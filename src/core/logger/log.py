@@ -1,7 +1,9 @@
 import logging
+import os
 
 from datetime import datetime
 from datetime import timezone
+from logging.handlers import RotatingFileHandler
 from logging.handlers import SysLogHandler
 
 import structlog
@@ -22,9 +24,12 @@ debug_logger.setLevel(app_logger_level)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(app_logger_level)
 
+if not os.path.exists("logs"):
+    os.mkdir("logs")
 
-file_handler = logging.FileHandler(
-    f"{datetime.strftime(datetime.now(timezone.utc), '%Y_%m_%d')}.log"
+file_handler = RotatingFileHandler(
+    f"logs/{datetime.strftime(datetime.now(timezone.utc), '%Y_%m_%d')}.log",
+    maxBytes=1_000_000,
 )
 
 app_logger.addHandler(console_handler)
@@ -50,6 +55,7 @@ structlog.configure(
         structlog.processors.CallsiteParameterAdder(
             parameters=[structlog.processors.CallsiteParameter.FILENAME]
         ),
+        structlog.processors.format_exc_info,
         structlog.processors.JSONRenderer(),
     ],
     context_class=dict,

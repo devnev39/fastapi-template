@@ -27,7 +27,10 @@ class LoggingASGIMiddleware:
         uid = str(uuid.uuid4())
         request_id.set(uid)
         contextvars.bind_contextvars(
-            request_id=uid, method=scope.get("method"), path=scope.get("path")
+            request_id=uid,
+            method=scope.get("method"),
+            path=scope.get("path"),
+            spans=span_list.get(),
         )
 
         try:

@@ -1,10 +1,11 @@
 from bson import ObjectId
-from src.models.role import Role, Permissions
+
+from src.models.role import Permissions, Role
 from src.models.user import UserIn
 
 
 def get_role(name: str = "Root"):
-    return Role(id=str(ObjectId()), name=name, permissions=Permissions.root_user)
+    return Role(id=str(ObjectId()), name=name, permissions=Permissions.root_user())
 
 
 def get_user(role_id: str):

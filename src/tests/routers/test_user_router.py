@@ -1,5 +1,6 @@
+#ruff: noqa: S101
 import pytest
-
+from fastapi import status
 from httpx import AsyncClient
 
 from src.models.role import Role
@@ -10,21 +11,21 @@ pytestmark = pytest.mark.anyio
 
 async def test_user_get_all(client: AsyncClient) -> None:
     response = await client.get("/users")
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list)
 
 
 async def test_user_post(client: AsyncClient, role: Role) -> None:
     user = get_user(role_id=str(role.id))
     response = await client.post("/users", json=user.model_dump())
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     assert response.json()
 
 
 async def test_user_update(client: AsyncClient, role: Role) -> None:
     user = get_user(role_id=str(role.id))
     response = await client.post("/users", json=user.model_dump())
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     assert response.json()
 
     user = user.model_dump(by_alias=True)
@@ -33,16 +34,16 @@ async def test_user_update(client: AsyncClient, role: Role) -> None:
         f"/users/{user['_id']}",
         json=user,
     )
-    assert update.status_code == 200
+    assert update.status_code == status.HTTP_200_OK
     assert update.json()
 
 
 async def test_user_delete(client: AsyncClient, role: Role):
     user = get_user(role_id=str(role.id))
     response = await client.post("/users", json=user.model_dump(by_alias=True))
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     assert response.json()
 
     response = await client.delete(f"/users/{user.id}")
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"status": True}

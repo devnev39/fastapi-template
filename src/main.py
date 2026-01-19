@@ -1,29 +1,22 @@
 import os
 import signal
-
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Annotated
 
 import markdown
 import toml
-
-from fastapi import Depends
-from fastapi import FastAPI
-from fastapi import HTTPException
-from fastapi import Request
-from fastapi import status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse
-from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse
 from jwt import ExpiredSignatureError
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import ValidationError
-from starlette.middleware.cors import CORSMiddleware
 
 from src.config.settings import settings
-from src.core.exceptions.client_exception import ClientException
-from src.core.exceptions.token_exception import TokenException
-from src.core.logger.context import error
+from src.core.exceptions.client_exception import ClientError
+from src.core.exceptions.token_exception import TokenExceptionError
 from src.core.logger.context import request_id
 from src.core.logger.log import logger
 from src.core.middlewares.logger import LoggingASGIMiddleware
@@ -35,8 +28,8 @@ toml_path = Path(__file__).parent.parent / "pyproject.toml"
 changelog_path = Path(__file__).parent.parent / "changelog.md"
 config = None
 
-print("TOML PATH : ")
-print(toml_path)
+logger.info(event="app.main.prepare", extra_str=f"toml path: {toml_path}")
+
 if toml_path.exists() and toml_path.is_file():
     config = toml.load(toml_path)
 
@@ -49,6 +42,7 @@ if config:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Lifespan for app."""
     # Connect to db
     try:
         client = AsyncIOMotorClient(settings.MONGO_URI)
@@ -68,24 +62,22 @@ app = FastAPI(lifespan=lifespan)
 
 origins = settings.get_origins()
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[str(i) for i in origins],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[str(i) for i in origins],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.add_middleware(LoggingASGIMiddleware)
 
 
 @app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    """Global http exception handler."""
     origin = request.headers.get("origin")
-    if origin in origins:
-        cors_origin = origin
-    else:
-        cors_origin = ""
+    cors_origin = origin if origin in origins else ""
 
     response = JSONResponse(
         content={"detail": exc.detail, "trace_id": request_id.get()},
@@ -96,7 +88,11 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 
 @app.exception_handler(Exception)
-async def client_server_exception_handler(request: Request, exc: Exception):
+async def client_server_exception_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    """Client exception handler."""
     origin = request.headers.get("origin")
     if origins[0] == "*":
         cors_origin = origins[0]
@@ -107,7 +103,7 @@ async def client_server_exception_handler(request: Request, exc: Exception):
 
     response = None
     trace_id = request_id.get()
-    if isinstance(exc, ClientException):
+    if isinstance(exc, ClientError):
         response = JSONResponse(
             content={"detail": str(exc), "trace_id": trace_id},
             status_code=exc.status_code,
@@ -122,7 +118,7 @@ async def client_server_exception_handler(request: Request, exc: Exception):
             content={"detail": str(exc), "trace_id": trace_id},
             status_code=403,
         )
-    elif isinstance(exc, TokenException):
+    elif isinstance(exc, TokenExceptionError):
         response = JSONResponse(
             content={"detail": str(exc), "trace_id": trace_id},
             status_code=401,
@@ -141,7 +137,11 @@ async def client_server_exception_handler(request: Request, exc: Exception):
 
 
 @app.exception_handler(RequestValidationError)
-async def request_validation_handler(_: Request, exc: RequestValidationError):
+async def request_validation_handler(
+    _: Request,
+    exc: RequestValidationError,
+) -> JSONResponse:
+    """Request validation error handler."""
     errors = [
         {"field": err.get("loc"), "message": err.get("msg")} for err in exc.errors()
     ]
@@ -159,18 +159,21 @@ app.include_router(router=router)
 
 
 @app.get("/")
-async def root():
+async def root() -> dict:
+    """Health check."""
     return {"message": "Application accepting request!"}
 
 
 @app.get("/version")
-async def version():
+async def version() -> dict:
+    """Return version of application."""
     return {"version": app_version}
 
 
 @app.get("/changelog", response_class=HTMLResponse)
-async def changelog(request: Request, user: TokenDecrypted = Depends(get_current_user)):
+async def changelog(_: Annotated[TokenDecrypted, Depends(get_current_user)]) -> str:
+    """Return changelog of application."""
     data = ""
-    with open(changelog_path, "r") as f:
+    with Path.open(changelog_path) as f:
         data = f.read()
     return markdown.markdown(data)

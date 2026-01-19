@@ -1,4 +1,5 @@
 from fastapi_mail import ConnectionConfig
+
 from src.config.settings import settings
 
 if settings.MAIL_USERNAME and settings.MAIL_PASSWORD:

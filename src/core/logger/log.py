@@ -1,10 +1,7 @@
 import logging
-import os
-
-from datetime import datetime
-from datetime import timezone
-from logging.handlers import RotatingFileHandler
-from logging.handlers import SysLogHandler
+from datetime import UTC, datetime
+from logging.handlers import RotatingFileHandler, SysLogHandler
+from pathlib import Path
 
 import structlog
 
@@ -24,11 +21,11 @@ debug_logger.setLevel(app_logger_level)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(app_logger_level)
 
-if not os.path.exists("logs"):
-    os.mkdir("logs")
+if not Path.exists("logs"):
+    Path.mkdir("logs")
 
 file_handler = RotatingFileHandler(
-    f"logs/{datetime.strftime(datetime.now(timezone.utc), '%Y_%m_%d')}.log",
+    f"logs/{datetime.strftime(datetime.now(UTC), '%Y_%m_%d')}.log",
     maxBytes=1_000_000,
 )
 
@@ -40,7 +37,7 @@ if settings.APP_LOGGER_ADDRESS is None:
     app_logger.warning("App logger address not set. Syslog will not be enabled.")
 elif settings.APP_LOGGER_ADDRESS and settings.APP_LOGGER_PORT:
     web_handler = SysLogHandler(
-        address=(settings.APP_LOGGER_ADDRESS, settings.APP_LOGGER_PORT)
+        address=(settings.APP_LOGGER_ADDRESS, settings.APP_LOGGER_PORT),
     )
     web_handler.setLevel(app_logger_level)
     app_logger.addHandler(web_handler)
@@ -53,7 +50,7 @@ structlog.configure(
         structlog.dev.set_exc_info,
         structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=False),
         structlog.processors.CallsiteParameterAdder(
-            parameters=[structlog.processors.CallsiteParameter.FILENAME]
+            parameters=[structlog.processors.CallsiteParameter.FILENAME],
         ),
         structlog.processors.format_exc_info,
         structlog.processors.JSONRenderer(),
@@ -64,4 +61,3 @@ structlog.configure(
 )
 
 logger = structlog.get_logger("applogger")
-# logger = logging.getLogger("default")

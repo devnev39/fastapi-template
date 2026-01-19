@@ -3,7 +3,9 @@
   "editor.defaultFormatter": "charliermarsh.ruff",
   "[python]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": "always"
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     }
-  }
+  },
+  "ruff.importStrategy": "useBundled"
 }

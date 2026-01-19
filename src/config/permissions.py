@@ -1,8 +1,5 @@
-from typing import Type
-
-
 class Permissions:
-    def __init__(self, model: Type):
+    def __init__(self, model: type):
         self.model = model
 
     @property
@@ -16,6 +13,5 @@ class Permissions:
 
 class PermissionProvider:
     @classmethod
-    @property
     def permissions(cls):
         return Permissions(cls)

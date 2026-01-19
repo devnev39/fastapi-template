@@ -1,22 +1,22 @@
-import bcrypt
+from typing import Annotated
 
-from typing import Annotated, Optional
+import bcrypt
 from pydantic import (
     BeforeValidator,
     Field,
+    SecretStr,
     field_serializer,
     field_validator,
-    SecretStr,
 )
 
-from src.models.common import CommonMethods, UpdatedAtProps, CreatedAtProps
+from src.models.common import CommonMethods, CreatedAtProps, UpdatedAtProps
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
 class User(CreatedAtProps, CommonMethods):
-    id: Optional[PyObjectId] = Field(
-        description="Mongodb entity id", default=None, serialization_alias="_id"
+    id: PyObjectId | None = Field(
+        description="Mongodb entity id", default=None, serialization_alias="_id",
     )
     username: str = Field(description="Username of user")
     name: str = Field(description="User name")
@@ -35,8 +35,8 @@ class UserIn(User):
     def hash_password(cls, password: SecretStr) -> SecretStr:
         return SecretStr(
             bcrypt.hashpw(
-                password.get_secret_value().encode("utf-8"), bcrypt.gensalt()
-            ).decode("utf-8")
+                password.get_secret_value().encode("utf-8"), bcrypt.gensalt(),
+            ).decode("utf-8"),
         )
 
 
@@ -52,5 +52,5 @@ class UserOut(User):
 
 
 class UserUpdate(UpdatedAtProps):
-    name: Optional[str] = None
-    role_id: Optional[str] = None
+    name: str | None = None
+    role_id: str | None = None

@@ -1,4 +1,6 @@
 class Environments:
+    """Environment types."""
+
     DEV: str = "dev"
     PROD: str = "prod"
     TEST: str = "test"

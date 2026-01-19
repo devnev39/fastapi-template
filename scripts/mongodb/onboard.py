@@ -2,7 +2,7 @@ from pymongo.mongo_client import MongoClient
 
 from src.config.settings import settings
 from src.db.collections import collections
-from src.models.role import Role, Permissions
+from src.models.role import Permissions, Role
 from src.models.user import UserIn
 
 client = MongoClient(settings.MONGO_URI)
@@ -16,7 +16,7 @@ role = role_collection.find_one({"name": "root"})
 if role:
     print("Role already exists !")
 else:
-    role = Role(name="root", permissions=Permissions.root_user)
+    role = Role(name="root", permissions=Permissions.root_user())
     role_collection.insert_one(role.model_dump_mongo())
     role = role_collection.find_one({"name": "root"})
 
@@ -33,7 +33,7 @@ else:
     )
     user_collection.insert_one(user.model_dump_mongo())
     user = user_collection.find_one(
-        {"username": settings.ROOT_USERNAME.get_secret_value()}
+        {"username": settings.ROOT_USERNAME.get_secret_value()},
     )
 
     print("Root user created !")

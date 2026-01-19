@@ -248,6 +248,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pyjwt" },
     { name = "python-multipart" },
+    { name = "ruff" },
     { name = "structlog" },
     { name = "toml" },
 ]
@@ -275,6 +276,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.6.0" },
     { name = "pyjwt", specifier = ">=2.9.0" },
     { name = "python-multipart", specifier = ">=0.0.12" },
+    { name = "ruff", specifier = ">=0.7.0" },
     { name = "structlog", specifier = ">=25.5.0" },
     { name = "toml", specifier = ">=0.10.2" },
 ]

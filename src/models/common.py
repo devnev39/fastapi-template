@@ -1,20 +1,18 @@
-from typing import Optional
 
 from bson import ObjectId
-from pydantic import BaseModel
-from pydantic import model_validator
+from pydantic import BaseModel, model_validator
 
-from src.core.utils.time import get_datetime_str
+from src.core.utils.time import get_utc_now
 
 
 class CreatedAtProps(BaseModel):
-    created_by: Optional[str] = None
-    created_at: str = get_datetime_str()
+    created_by: str | None = None
+    created_at: str = get_utc_now()
 
 
 class UpdatedAtProps(BaseModel):
-    updated_at: str = get_datetime_str()
-    updated_by: Optional[str] = None
+    updated_at: str = get_utc_now()
+    updated_by: str | None = None
 
 
 class CommonMethods(BaseModel):

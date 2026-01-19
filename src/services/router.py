@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from fastapi import HTTPException
 
 from src.models.common import StatusResponse
 from src.services.auth_service.router.router import router as auth_router

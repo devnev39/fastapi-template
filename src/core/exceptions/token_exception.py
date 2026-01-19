@@ -1,3 +1,3 @@
-class TokenException(Exception):
+class TokenExceptionError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)

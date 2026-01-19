@@ -1,7 +1,8 @@
-from typing import Annotated, Optional
+from typing import Annotated
+
 from pydantic import BaseModel, BeforeValidator, Field
 
-from src.models.common import CreatedAtProps, UpdatedAtProps, CommonMethods
+from src.models.common import CommonMethods, CreatedAtProps, UpdatedAtProps
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
@@ -11,7 +12,6 @@ class Permissions(BaseModel):
     role: list[str] = ["read", "write"]
 
     @classmethod
-    @property
     def read_only(cls):
         read_scopes = []
         for entity, scopes in cls.model_fields.items():
@@ -20,7 +20,6 @@ class Permissions(BaseModel):
         return read_scopes
 
     @classmethod
-    @property
     def root_user(cls):
         root_scopes = []
         for field, scopes in cls.model_fields.items():
@@ -29,13 +28,13 @@ class Permissions(BaseModel):
 
 
 class Role(CreatedAtProps, CommonMethods):
-    id: Optional[PyObjectId] = Field(
-        description="Mongodb entity id", serialization_alias="_id", default=None
+    id: PyObjectId | None = Field(
+        description="Mongodb entity id", serialization_alias="_id", default=None,
     )
     name: str = Field(description="Role name")
     permissions: list[str]
 
 
 class RoleUpdate(UpdatedAtProps):
-    name: Optional[str] = Field(description="Role name", default=None)
-    permissions: Optional[list[str]] = Field(description="Permissions", default=None)
+    name: str | None = Field(description="Role name", default=None)
+    permissions: list[str] | None = Field(description="Permissions", default=None)

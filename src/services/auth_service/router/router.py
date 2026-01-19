@@ -1,48 +1,43 @@
-from datetime import datetime
 from datetime import timedelta
 from typing import Annotated
 
 import jwt
-
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-from fastapi import Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.config.settings import settings
-from src.core.logger.context import extra_str
 from src.core.logger.log import logger
+from src.core.utils.time import get_utc_now
 from src.db.query.roles import get_role_db
 from src.db.query.users import get_user_by_username
 from src.models.login import Login
 from src.models.role import Role
-from src.models.token import Token
-from src.models.token import TokenDecrypted
+from src.models.token import Token, TokenDecrypted
 from src.models.user import User
 
 router = APIRouter()
 
 
 def create_token(user: User, role: Role) -> str:
+    """Create token for user with role."""
     scopes = role.permissions
-    userToken = TokenDecrypted(
+    user_token = TokenDecrypted(
         sub=user.username,
         role_id=str(role.id),
         scopes=scopes,
         user_id=str(user.id),
-        exp=datetime.now() + timedelta(minutes=settings.TOKEN_EXPIRY_PERIOD),
+        exp=get_utc_now() + timedelta(minutes=settings.TOKEN_EXPIRY_PERIOD),
     )
-    encoded = jwt.encode(
-        userToken.model_dump(),
+    return jwt.encode(
+        user_token.model_dump(),
         key=settings.JWT_SECRET,
         algorithm=settings.JWT_ALGORITHM,
     )
-    return encoded
 
 
 async def login(formdata: Login, request: Request) -> Token:
+    """Return token with provided formadata and request."""
     # find user
     logger.info("auth.login.find_user")
     user = await get_user_by_username(formdata.username, request.app.state.db)
@@ -65,19 +60,23 @@ async def login(formdata: Login, request: Request) -> Token:
     return Token(access_token=token, token_type="bearer", user=user)
 
 
-@router.post("", response_model=Token)
-async def login_client(formdata: Login, request: Request):
+@router.post("")
+async def login_client(formdata: Login, request: Request) -> Token:
+    """Login client with provided formdata."""
     logger.info("auth.login.start")
     return await login(formdata, request)
 
 
-@router.post("/swagger", response_model=Token)
+@router.post("/swagger")
 async def login_swagger(
-    formdata: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
-):
+    formdata: Annotated[OAuth2PasswordRequestForm, Depends()],
+    request: Request,
+) -> Token:
+    """Perform login via swagger."""
     logger.info("auth.login_swagger.start")
     token = await login(
-        Login(username=formdata.username, password=formdata.password), request
+        Login(username=formdata.username, password=formdata.password),
+        request,
     )
     response = JSONResponse(status_code=200, content=token)
     response.set_cookie(key="Authorization", value=f"Bearer {token.access_token}")

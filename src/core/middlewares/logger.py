@@ -1,17 +1,10 @@
 import time
 import uuid
 
-from starlette.types import ASGIApp
-from starlette.types import Message
-from starlette.types import Receive
-from starlette.types import Scope
-from starlette.types import Send
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from structlog import contextvars
 
-from src.core.logger.context import error
-from src.core.logger.context import extra_str
-from src.core.logger.context import request_id
-from src.core.logger.context import span_list
+from src.core.logger.context import error, extra_str, request_id, span_list
 from src.core.logger.log import logger
 
 
@@ -41,7 +34,7 @@ class LoggingASGIMiddleware:
                 await send(message)
                 if message.get("type") == "http.response.start":
                     contextvars.bind_contextvars(
-                        error=error.get(), extra_str=extra_str.get()
+                        error=error.get(), extra_str=extra_str.get(),
                     )
                     req_time = time.perf_counter() - start
                     logger.info(

@@ -1,9 +1,11 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 
-def get_datetime_str() -> str:
-    return datetime.now().isoformat()
+def get_utc_now() -> str:
+    """Get utc now time."""
+    return datetime.now(UTC).isoformat()
 
 
 def get_timestamp() -> float:
-    return datetime.now().timestamp()
+    """Get utc timestamp."""
+    return datetime.now(UTC).timestamp()

@@ -5,15 +5,15 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from src.db.query.roles import get_role_db
+from src.db.query.users import get_user_by_username
+from src.models.login import Login
+from src.models.token import Token, TokenDecrypted
 
 from src.config.settings import settings
 from src.core.logger.log import logger
 from src.core.utils.time import get_utc_now
-from src.db.query.roles import get_role_db
-from src.db.query.users import get_user_by_username
-from src.models.login import Login
 from src.models.role import Role
-from src.models.token import Token, TokenDecrypted
 from src.models.user import User
 
 router = APIRouter()

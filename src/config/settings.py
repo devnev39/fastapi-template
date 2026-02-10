@@ -19,7 +19,7 @@ class EnvSettings(BaseSettings):
 
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
     PROJECT_NAME: str = "FastAPI Auth"
-    MONGO_URI: str = "mongodb://localhost:27017"
+    CONNECTION_STRING: str = "mongodb://localhost:27017"
     ENV: str = Environments().TEST
     DB_NAME: str = Environments().TEST_DB_NAME
     TOKEN_EXPIRY_PERIOD: int = 30  # In minutes

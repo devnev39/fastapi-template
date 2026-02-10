@@ -5,7 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "alembic>=1.18.3",
+    "alembic-postgresql-enum>=1.9.0",
     "anyio>=4.6.2.post1",
+    "asyncpg>=0.31.0",
     "bcrypt>=4.2.0",
     "faker>=30.6.0",
     "fastapi[standard]>=0.115.2",
@@ -15,10 +18,12 @@ dependencies = [
     "opentelemetry-exporter-otlp-proto-grpc>=1.39.1",
     "passlib>=1.7.4",
     "pip>=25.3",
+    "psycopg2>=2.9.11",
     "pydantic-settings>=2.6.0",
     "pyjwt>=2.9.0",
     "python-multipart>=0.0.12",
     "ruff>=0.7.0",
+    "sqlalchemy>=2.0.46",
     "structlog>=25.5.0",
     "toml>=0.10.2",
 ]

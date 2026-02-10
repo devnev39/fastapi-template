@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from src.models.user import User
 
@@ -9,6 +9,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: User
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class TokenDecrypted(BaseModel):

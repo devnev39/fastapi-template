@@ -1,4 +1,3 @@
-
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
@@ -7,7 +6,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 
 from src.config.settings import settings
 from src.core.logger.log import logger
-from src.models.token import TokenDecrypted
+from src.schemas.token import TokenDecrypted
 
 
 class OAuth2PasswordBearerCookie(OAuth2):
@@ -53,7 +52,8 @@ class OAuth2PasswordBearerCookie(OAuth2):
         if not authorization or scheme.lower() != "bearer":
             if self.auto_error:
                 raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated",
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Not authenticated",
                 )
             return None
         return param
@@ -82,6 +82,7 @@ async def get_current_user(
             if scope not in user.scopes:
                 logger.warning(event="app.security.forbidden", status_code=403)
                 raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions",
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Not enough permissions",
                 )
     return user

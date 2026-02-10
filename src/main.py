@@ -21,7 +21,7 @@ from src.core.logger.context import request_id
 from src.core.logger.log import logger
 from src.core.middlewares.logger import LoggingASGIMiddleware
 from src.core.security.get_current_user import get_current_user
-from src.models.token import TokenDecrypted
+from src.schemas.token import TokenDecrypted
 from src.services.router import router
 
 toml_path = Path(__file__).parent.parent / "pyproject.toml"

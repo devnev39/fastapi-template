@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.models.common import StatusResponse
+from src.schemas.common import StatusResponse
 from src.services.auth_service.router.router import router as auth_router
 from src.services.role_service.router.router import router as role_router
 from src.services.user_service.router.router import router as user_router

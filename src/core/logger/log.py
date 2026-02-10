@@ -21,8 +21,8 @@ debug_logger.setLevel(app_logger_level)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(app_logger_level)
 
-if not Path.exists("logs"):
-    Path.mkdir("logs")
+if not Path.exists(Path("logs")):
+    Path.mkdir(Path("logs"))
 
 file_handler = RotatingFileHandler(
     f"logs/{datetime.strftime(datetime.now(UTC), '%Y_%m_%d')}.log",

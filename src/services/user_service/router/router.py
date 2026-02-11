@@ -1,8 +1,17 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Path, Request, Security
-from src.db.query.roles import get_role_db
-from src.db.query.users import (
+from fastapi import APIRouter, Depends, Path, Security
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.config.model_permissions import User as UserPermissions
+from src.core.logger.log import logger
+from src.core.security.get_current_user import get_current_user
+from src.db.db import get_db
+from src.schemas.common import StatusResponse
+from src.schemas.token import TokenDecrypted
+from src.schemas.user import User, UserIn, UserUpdate
+from src.services.role_service.service.service import get_role_db
+from src.services.user_service.service.service import (
     create_user_db,
     delete_user_db,
     get_all_users_db,
@@ -10,19 +19,12 @@ from src.db.query.users import (
     update_user_db,
 )
 
-from src.config.model_permissions import User as UserPermissions
-from src.core.logger.log import logger
-from src.core.security.get_current_user import get_current_user
-from src.models.common import StatusResponse
-from src.models.token import TokenDecrypted
-from src.models.user import User, UserIn, UserUpdate
-
 router = APIRouter()
 
 
-@router.get("")
+@router.get("", response_model=list[User])
 async def get_all_users(
-    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
     _: Annotated[
         TokenDecrypted,
         Security(
@@ -30,14 +32,14 @@ async def get_all_users(
             scopes=[UserPermissions.permissions().read],
         ),
     ],
-) -> list[User]:
+):
     logger.info("router.user.get_all_user")
-    return await get_all_users_db(db=request.app.state.db)
+    return await get_all_users_db(db=db)
 
 
-@router.get("/me")
+@router.get("/me", response_model=User)
 async def get_me(
-    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[
         TokenDecrypted,
         Security(
@@ -45,15 +47,15 @@ async def get_me(
             scopes=[UserPermissions.permissions().read],
         ),
     ],
-) -> User:
+):
     logger.info("router.user.get_me")
-    return await get_user_db(user_id=current_user.user_id, db=request.app.state.db)
+    return await get_user_db(user_id=current_user.user_id, db=db)
 
 
-@router.get("/{user_id}")
+@router.get("/{user_id}", response_model=User)
 async def get_user(
-    request: Request,
-    user_id: Annotated[str, Path(..., pattern=r"^[0-9a-f]{24}$")],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    user_id: Annotated[int, Path(..., pattern=r"^[0-9a-f]{24}$")],
     _: Annotated[
         TokenDecrypted,
         Security(
@@ -61,15 +63,15 @@ async def get_user(
             scopes=[UserPermissions.permissions().read],
         ),
     ],
-) -> User:
+):
     logger.info("router.user.get_user_by_id")
-    return await get_user_db(user_id=user_id, db=request.app.state.db)
+    return await get_user_db(user_id=user_id, db=db)
 
 
-@router.post("", status_code=201)
+@router.post("", status_code=201, response_model=User)
 async def create_user(
     user: UserIn,
-    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[
         TokenDecrypted,
         Security(
@@ -77,18 +79,18 @@ async def create_user(
             scopes=[UserPermissions.permissions().write],
         ),
     ],
-) -> User:
+):
     logger.info("router.user.create_user")
-    user.created_by = current_user.user_id
-    await get_role_db(user.role_id, request.app.state.db)
-    return await create_user_db(user, db=request.app.state.db)
+    user.created_by = str(current_user.user_id)
+    await get_role_db(user.role_id, db)
+    return await create_user_db(user, db)
 
 
-@router.patch("/{user_id}")
+@router.patch("/{user_id}", response_model=User)
 async def update_user(
-    user_id: str,
+    user_id: int,
     user: UserUpdate,
-    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[
         TokenDecrypted,
         Security(
@@ -96,20 +98,20 @@ async def update_user(
             scopes=[UserPermissions.permissions().write],
         ),
     ],
-) -> User:
+):
     logger.info("router.user.update_user")
     user.updated_by = current_user.sub
     return await update_user_db(
         user_id=user_id,
-        user=user,
-        db=request.app.state.db,
+        user_update=user,
+        db=db,
     )
 
 
 @router.delete("/{user_id}")
 async def delete_user(
-    user_id: str,
-    request: Request,
+    user_id: int,
+    db: Annotated[AsyncSession, Depends(get_db)],
     _: Annotated[
         TokenDecrypted,
         Security(
@@ -119,5 +121,5 @@ async def delete_user(
     ],
 ):
     logger.info("router.user.delete_user")
-    await delete_user_db(user_id=user_id, db=request.app.state.db)
+    await delete_user_db(user_id=user_id, db=db)
     return StatusResponse(status="True")

@@ -1,10 +1,6 @@
-from typing import Annotated
+from pydantic import BaseModel, ConfigDict, Field
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
-
-from src.schemas.common import CommonMethods, CreatedAtProps, UpdatedAtProps
-
-PyObjectId = Annotated[str, BeforeValidator(str)]
+from src.schemas.common import CreatedAtProps, UpdatedAtProps
 
 
 class Permissions(BaseModel):
@@ -27,10 +23,8 @@ class Permissions(BaseModel):
         return root_scopes
 
 
-class Role(CreatedAtProps, CommonMethods):
-    id: PyObjectId | None = Field(
-        description="Mongodb entity id",
-        serialization_alias="_id",
+class Role(CreatedAtProps):
+    id: int | None = Field(
         default=None,
     )
     name: str = Field(description="Role name")

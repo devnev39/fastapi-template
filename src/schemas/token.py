@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from src.models.user import User
+from src.schemas.user import User
 
 
 class Token(BaseModel):
@@ -16,6 +16,6 @@ class Token(BaseModel):
 class TokenDecrypted(BaseModel):
     sub: str
     scopes: list[str]
-    user_id: str
-    role_id: str
+    user_id: int
+    role_id: int
     exp: datetime

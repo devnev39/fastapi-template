@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Cooking
 
-#### NOTHING
+### user groups
+- admin will be able to create and manage user groups
+- permissions to user groups
+- add user to user group
+  
+### user hierarchy
+- clear user hierarchy for managing different user
+
+## Testing
+- custom logging pipeline with support for grafana
+- different logging standards like opentel
+- custom span support
 
 ## [0.1.3]
 

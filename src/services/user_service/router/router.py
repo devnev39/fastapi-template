@@ -55,7 +55,7 @@ async def get_me(
 @router.get("/{user_id}", response_model=User)
 async def get_user(
     db: Annotated[AsyncSession, Depends(get_db)],
-    user_id: Annotated[int, Path(..., pattern=r"^[0-9a-f]{24}$")],
+    user_id: Annotated[int, Path(...)],
     _: Annotated[
         TokenDecrypted,
         Security(

@@ -53,7 +53,7 @@ class OAuth2PasswordBearerCookie(OAuth2):
             if self.auto_error:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Not authenticated",
+                    detail="Not authenticated !",
                 )
             return None
         return param

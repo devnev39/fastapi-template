@@ -67,10 +67,22 @@ async def login(formdata: Login, db: AsyncSession) -> Token:
 
 
 @router.post("", response_model=Token)
-async def login_client(formdata: Login, db: Annotated[AsyncSession, Depends(get_db)]):
+async def login_client(
+    formdata: Login,
+    response: Response,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
     """Login client with provided formdata."""
     logger.info("auth.login.start")
-    return await login(formdata, db)
+    token = await login(formdata, db)
+    response.set_cookie(
+        "Authorization",
+        f"Bearer {token.access_token}",
+        samesite="lax",
+        secure=False,
+        httponly=False,
+    )
+    return token
 
 
 @router.post("/swagger", response_model=Token)

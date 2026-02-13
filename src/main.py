@@ -11,7 +11,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from jwt import ExpiredSignatureError
-from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import ValidationError
 
 from src.config.settings import settings
@@ -45,13 +44,8 @@ async def lifespan(app: FastAPI):
     """Lifespan for app."""
     # Connect to db
     try:
-        client = AsyncIOMotorClient(settings.MONGO_URI)
-        app.state.db = client.get_database(settings.DB_NAME)
-        ping_response = await app.state.db.command("ping")
-        if int(ping_response["ok"]) != 1:
-            raise Exception("Problem connecting to database cluster.")
+        logger.info("Starting application...")
         yield
-        client.close()
     except Exception as ex:
         logger.error("Error in starting application !", error=str(ex))
     finally:

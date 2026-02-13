@@ -1,5 +1,6 @@
 import bcrypt
 from pydantic import (
+    ConfigDict,
     Field,
     SecretStr,
     field_serializer,
@@ -14,8 +15,9 @@ class User(CreatedAtProps):
         default=None,
     )
     username: str = Field(description="Username of user")
-    name: str = Field(description="User name")
-    role_id: int = Field(description="Role id", pattern=r"^\d+$")
+    role_id: int = Field(description="Role id")
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserIn(User):

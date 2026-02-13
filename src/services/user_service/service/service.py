@@ -34,6 +34,7 @@ async def get_user_by_username(username: str, db: AsyncSession) -> User:
             resource_id=f"<username>{username}",
             event="src.services.user_service.service.service.get_user_by_username",
         )
+    return user
 
 
 async def get_all_users_db(db: AsyncSession) -> list[User]:

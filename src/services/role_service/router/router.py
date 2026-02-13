@@ -54,7 +54,7 @@ async def get_my_role(
 @router.get("/{role_id}", response_model=Role)
 async def get_role(
     db: Annotated[AsyncSession, Depends(get_db)],
-    role_id: Annotated[int, Path(..., pattern=r"^\d+$")],
+    role_id: Annotated[int, Path(...)],
     _: Annotated[
         TokenDecrypted,
         Security(

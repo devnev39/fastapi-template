@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Cooking
 
-#### Config
-- Config to set the logging and other things
-
-#### Encryption support
-- Add support for assymetric encryption while transporting sensitive data
+#### NOTHING
 
 ## [0.1.3]
 

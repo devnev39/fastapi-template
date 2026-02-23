@@ -50,7 +50,7 @@ structlog.configure(
         structlog.dev.set_exc_info,
         structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=False),
         structlog.processors.CallsiteParameterAdder(
-            parameters=[structlog.processors.CallsiteParameter.FILENAME],
+            parameters=[structlog.processors.CallsiteParameter.PATHNAME],
         ),
         structlog.processors.format_exc_info,
         structlog.processors.JSONRenderer(),

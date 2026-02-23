@@ -2,11 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions.resource import ResourceNotFoundError
+from src.core.logger.spans import monitor
 from src.models.user import User
 from src.schemas.user import User as UserSchema
 from src.schemas.user import UserUpdate as UserUpdateSchema
 
 
+@monitor
 async def create_user_db(user: UserSchema, db: AsyncSession) -> User:
     new_user = User(**user.model_dump())
     db.add(new_user)
@@ -15,6 +17,7 @@ async def create_user_db(user: UserSchema, db: AsyncSession) -> User:
     return new_user
 
 
+@monitor
 async def get_user_db(user_id: int, db: AsyncSession) -> User:
     user = await db.scalar(select(User).where(User.id == user_id))
     if not user:
@@ -26,6 +29,7 @@ async def get_user_db(user_id: int, db: AsyncSession) -> User:
     return user
 
 
+@monitor
 async def get_user_by_username(username: str, db: AsyncSession) -> User:
     user = await db.scalar(select(User).where(User.username == username))
     if not user:
@@ -37,10 +41,12 @@ async def get_user_by_username(username: str, db: AsyncSession) -> User:
     return user
 
 
+@monitor
 async def get_all_users_db(db: AsyncSession) -> list[User]:
     return list((await db.scalars(select(User))).all())
 
 
+@monitor
 async def update_user_db(
     user_id: int,
     user_update: UserUpdateSchema,
@@ -55,6 +61,7 @@ async def update_user_db(
     return user
 
 
+@monitor
 async def delete_user_db(user_id: int, db: AsyncSession):
     user = await get_user_db(user_id, db)
     await db.delete(user)

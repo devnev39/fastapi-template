@@ -11,12 +11,16 @@ def create_span(name: str | None = None):
     start = time.perf_counter()
     yield
     period = time.perf_counter() - start
-    prev_list = span_list.get() if span_list.get() else []
+    prev_list = span_list.get() or []
     prev_list.append({"name": name, "time": round(period * 1000, 2)})
     span_list.set(prev_list)
 
 
 def monitor(arg):
+    """
+    Monitor a function. The info of its monitoring will be added to span_list context variable.
+    :param arg:
+    """
     if callable(arg):
         # arg is a function
         # check if coroutine or function
@@ -35,6 +39,7 @@ def monitor(arg):
                 return arg(*args, **kwargs)
 
         return wrapper
+
     # arg is name
     # check function type
     def inner_wrapper(func):

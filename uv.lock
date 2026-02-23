@@ -332,6 +332,7 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "structlog" },
     { name = "toml" },
+    { name = "typer" },
 ]
 
 [package.dev-dependencies]
@@ -365,6 +366,7 @@ requires-dist = [
     { name = "sqlalchemy", specifier = ">=2.0.46" },
     { name = "structlog", specifier = ">=25.5.0" },
     { name = "toml", specifier = ">=0.10.2" },
+    { name = "typer", specifier = ">=0.12.5" },
 ]
 
 [package.metadata.requires-dev]

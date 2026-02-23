@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - different logging standards like opentel
 - custom span support
 
+## Logging
+- pushing logs to db with a strategy
+  - at server end (lifespan event)
+  - background task with scheduler
+  - cron job
+
 ## [0.1.3]
 
 ### Added

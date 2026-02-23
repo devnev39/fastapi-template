@@ -26,6 +26,7 @@ dependencies = [
     "sqlalchemy>=2.0.46",
     "structlog>=25.5.0",
     "toml>=0.10.2",
+    "typer>=0.12.5",
 ]
 
 [tool.uv]

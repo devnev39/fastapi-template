@@ -34,7 +34,8 @@ class LoggingASGIMiddleware:
                 await send(message)
                 if message.get("type") == "http.response.start":
                     contextvars.bind_contextvars(
-                        error=error.get(), extra_str=extra_str.get(),
+                        error=error.get(),
+                        extra_str=extra_str.get(),
                     )
                     req_time = time.perf_counter() - start
                     logger.info(

@@ -25,7 +25,7 @@ if not Path.exists(Path("logs")):
     Path.mkdir(Path("logs"))
 
 file_handler = RotatingFileHandler(
-    f"logs/{datetime.strftime(datetime.now(UTC), '%Y_%m_%d')}.log",
+    f"C:\\user_logs\\fast_temp\\logs\\{datetime.strftime(datetime.now(UTC), '%Y_%m_%d')}.log",
     maxBytes=1_000_000,
 )
 
